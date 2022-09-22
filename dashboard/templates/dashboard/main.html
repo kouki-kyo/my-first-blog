@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load boost %}
+{% load my_templatetags %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="~/lib/datatables.net-bs/css/dataTables.bootstrap.min.css" />
+
+<div class="d-flex justify-content-around">
+    <div class="col-md-5">
+        <div class="card card-outline card-primary">
+            <div class="card-header">
+                <h3 class="card-title">Bar Chart</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="maximize"><i class="fas fa-expand"></i></button>
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
+                    <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+                </div>
+            </div>
+            <div class="card-body">
+                <canvas id="barChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="card card-outline card-primary">
+            <div class="card-header">
+                <h3 class="card-title">Line Chart</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="maximize"><i class="fas fa-expand"></i></button>
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
+                    <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+                </div>
+            </div>
+            <div class="card-body">
+                <canvas id="lineChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="d-flex justify-content-around mt-3">
+    <div class="col-md-5">
+        <div class="card card-outline card-primary">
+            <div class="card-header">
+                <h3 class="card-title">Bubble Chart</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="maximize"><i class="fas fa-expand"></i></button>
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
+                    <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+                </div>
+            </div>
+            <div class="card-body">
+                <canvas id="bubbleChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="card card-outline card-primary">
+            <div class="card-header">
+                <h3 class="card-title">Area Chart</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="maximize"><i class="fas fa-expand"></i></button>
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
+                    <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+                </div>
+            </div>
+            <div class="card-body">
+                <canvas id="areaChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <img src="data:image/png;base64,{{ chart_matplotlib | safe }}" style="width: 100%">
+</div>
+
+
+<h2>Dataset 1, 2</h2>
+<table id="example" class="table table-hover table-condensed">
+    <thead>
+        <tr>
+            <th>Label</th>
+            <th>Dataset 1</th>
+            <th>Dataset 2</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for label in chart_labels %}
+        <tr>
+            <td>{{ label }}</td>
+            <td>{% access_list_by_index list_chart_data_x.0 forloop.counter0 %}</td>
+            <td>{% access_list_by_index list_chart_data_x.1 forloop.counter0 %}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h2>Dataset 3, 4</h2>
+<table id="example" class="table table-hover table-condensed">
+    <thead>
+        <tr>
+            <th rowspan="2">Label</th>
+            <th colspan="2">Dataset 3</th>
+            <th colspan="2">Dataset 4</th>
+        </tr>
+        <tr>
+            <th>x</th>
+            <th>y</th>
+            <th>x</th>
+            <th>y</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for label in chart_labels %}
+        <tr>
+            <td>{{ label }}</td>
+            <td>{% access_list_of_dict_by_index_and_key list_chart_data_xyr.0 forloop.counter0 'x' %}</td>
+            <td>{% access_list_of_dict_by_index_and_key list_chart_data_xyr.0 forloop.counter0 'y' %}</td>
+            <td>{% access_list_of_dict_by_index_and_key list_chart_data_xyr.1 forloop.counter0 'x' %}</td>
+            <td>{% access_list_of_dict_by_index_and_key list_chart_data_xyr.1 forloop.counter0 'y' %}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+<script src="~/lib/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="~/lib/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<script>
+    $(function () {
+        $("#example").DataTable();
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js" integrity="sha512-ElRFoEQdI5Ht6kZvyzXhYG9NqjtkmlkfYk0wr6wHxU9JEHakS7UJZNeml5ALk+8IKlU6jDgMabC3vkumRokgJA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type="text/javascript">
+    const chartLabels = {{ chart_labels|safe }};
+    const listChartDataX = {{ list_chart_data_x|safe }};
+    const listChartDataXYR = {{ list_chart_data_xyr|safe }};
+</script>
+<script src="{% static 'js/dashboard-charts.js' %}"></script>
+
+{% endblock %}
