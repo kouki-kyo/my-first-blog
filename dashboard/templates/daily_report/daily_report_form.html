@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load boost %}
+{% load my_templatetags %}
+
+{% block title %}Daily Report{% endblock %}
+
+{% block content %}
+
+<h2>日報入力</h2>
+<form method="POST">{% csrf_token %}
+    {% for item in form %}
+        <div class="form-group">
+            <label for="{{item.id_for_label}}">{{item.label}}</label>
+            {% if item.name == 'name' %}
+                <input
+                    type="{{item.field.widget.input_type}}"
+                    class="form-control"
+                    {% if item.field.required %}required{% endif %}
+                    name="{{item.name}}"
+                    id="{{item.id_for_label}}">
+            {% else %}
+                <textarea
+                    class="form-control"
+                    {% if item.field.required %}required{% endif %}
+                    name="{{item.name}}"
+                    id="{{item.id_for_label}}"
+                    rows="3"></textarea>
+            {% endif %}
+        </div>
+    {% endfor %}
+    <button type="submit" class="save btn btn-default">Save</button>
+</form>
+
+{% endblock %}

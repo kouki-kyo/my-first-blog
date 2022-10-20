@@ -1,8 +1,14 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+from django.http.response import HttpResponseRedirect
+from django.urls import reverse
+
 from django.views.generic import TemplateView
 from . import matplotlib
 
 import random
+
+from .forms import DailyReportForm
+from .models import DailyReport
 
 class MainView(TemplateView):
     def dashboard_view(request):
@@ -22,3 +28,24 @@ class MainView(TemplateView):
             'chart_matplotlib': chart_matplotlib
         }
         return render(request, template_name, context)
+    
+    def new_daily_report(request):
+        template_name = 'daily_report/daily_report_form.html'
+        if request.method == "POST":
+            form = DailyReportForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return HttpResponseRedirect(reverse('dashboard:daily_report_list'))
+            else:
+                context = {
+                    'form': form
+                }
+                return render(request, template_name, context)
+        else:
+            form = DailyReportForm()
+        return render(request, template_name, {'form': form})
+    
+    def daily_report_list(request):
+        template_name = 'daily_report/daily_report_list.html'
+        daily_reports = DailyReport.objects.order_by('-created')
+        return render(request, template_name, {'daily_reports': daily_reports})

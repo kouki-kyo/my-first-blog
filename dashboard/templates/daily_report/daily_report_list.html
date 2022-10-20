@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load boost %}
+{% load my_templatetags %}
+
+{% block title %}Daily Report{% endblock %}
+
+{% block content %}
+
+<div class="row row-cols-auto d-flex justify-content-around">
+    {% for daily_report in daily_reports %}
+        <div class="col-md-5">
+            <div class="card card-outline card-primary">
+                <div class="card-header">
+                    <h3 class="card-title">{{ daily_report.name }} <small>{{ daily_report.created }}</small></h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="maximize"><i class="fas fa-expand"></i></button>
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
+                        <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="font-weight-bold mb-0">業務内容：</p>
+                    <p>{{ daily_report.work_description|linebreaksbr }}</p>
+                    <p class="font-weight-bold mb-0">WOWポイント：</p>
+                    <p>{{ daily_report.wow_point|linebreaksbr }}</p>
+                    <p class="font-weight-bold mb-0">成長の種：</p>
+                    <p>{{ daily_report.source_of_improvement|linebreaksbr }}</p>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock %}
