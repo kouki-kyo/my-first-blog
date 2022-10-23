@@ -7,7 +7,6 @@
 {% block title %}Daily Report{% endblock %}
 
 {% block content %}
-
 <h2>日報入力</h2>
 <form method="POST">{% csrf_token %}
     {% for item in form %}
@@ -19,7 +18,9 @@
                     class="form-control"
                     {% if item.field.required %}required{% endif %}
                     name="{{item.name}}"
-                    id="{{item.id_for_label}}">
+                    id="{{item.id_for_label}}"
+                    value="{{user_name}}"
+                    disabled>
             {% else %}
                 <textarea
                     class="form-control"

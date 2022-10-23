@@ -3,14 +3,16 @@ from django.http.response import HttpResponseRedirect
 from django.urls import reverse
 
 from django.views.generic import TemplateView
-from . import matplotlib
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
 
+from . import matplotlib
 import random
 
 from .forms import DailyReportForm
 from .models import DailyReport
 
-class MainView(TemplateView):
+class MainView(TemplateView, LoginRequiredMixin):
     def dashboard_view(request):
         template_name = 'dashboard/main.html'
 
@@ -30,6 +32,7 @@ class MainView(TemplateView):
         return render(request, template_name, context)
     
     def new_daily_report(request):
+        user_name = request.user
         template_name = 'daily_report/daily_report_form.html'
         if request.method == "POST":
             form = DailyReportForm(request.POST)
@@ -43,7 +46,7 @@ class MainView(TemplateView):
                 return render(request, template_name, context)
         else:
             form = DailyReportForm()
-        return render(request, template_name, {'form': form})
+        return render(request, template_name, {'form': form, 'user_name': user_name})
     
     def daily_report_list(request):
         template_name = 'daily_report/daily_report_list.html'
